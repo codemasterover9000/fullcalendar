@@ -122,11 +122,14 @@ export default class BasicView extends View {
 
 
   // Generates an HTML attribute string for setting the width of the week number column, if it is known
-  weekNumberStyleAttr() {
-    if (this.weekNumberWidth != null) {
-      return 'style="width:' + this.weekNumberWidth + 'px"'
+  weekNumberStyleAttr(element?: any)
+  {
+    if (this.weekNumberWidth != null)
+    {
+      element.style.width = this.weekNumberWidth + 'px';
+      //return 'style="width:' + this.weekNumberWidth + 'px"'
     }
-    return ''
+    return element;
   }
 
 
@@ -267,12 +270,13 @@ function makeDayGridSubclass(SuperClass) {
       let view = this.view
 
       if (this.colWeekNumbersVisible) {
-        return '' +
-          '<th class="fc-week-number ' + view.calendar.theme.getClass('widgetHeader') + '" ' + view.weekNumberStyleAttr() + '>' +
-            '<span>' + // needed for matchCellWidths
-              htmlEscape(this.opt('weekNumberTitle')) +
-            '</span>' +
-          '</th>'
+        let htmlFragment = document.createRange().createContextualFragment('<th class="fc-week-number ' + view.calendar.theme.getClass('widgetHeader') + '">' +
+                                                                           '<span>' + // needed for matchCellWidths
+                                                                           htmlEscape(this.opt('weekNumberTitle')) +
+                                                                           '</span>' +
+                                                                           '</th>');
+        view.weekNumberStyleAttr(htmlFragment);
+        return '' + htmlFragment;
       }
 
       return ''
@@ -285,13 +289,14 @@ function makeDayGridSubclass(SuperClass) {
       let weekStart = this.getCellDate(row, 0)
 
       if (this.colWeekNumbersVisible) {
-        return '' +
-          '<td class="fc-week-number" ' + view.weekNumberStyleAttr() + '>' +
-            view.buildGotoAnchorHtml( // aside from link, important for matchCellWidths
-              { date: weekStart, type: 'week', forceOff: this.colCnt === 1 },
-              weekStart.format('w') // inner HTML
-            ) +
-          '</td>'
+        let htmlFragment = document.createRange().createContextualFragment('<td class="fc-week-number">' +
+        view.buildGotoAnchorHtml( // aside from link, important for matchCellWidths
+          { date: weekStart, type: 'week', forceOff: this.colCnt === 1 },
+          weekStart.format('w') // inner HTML
+        ) +
+        '</td>');
+        view.weekNumberStyleAttr(htmlFragment);
+        return '' + htmlFragment;
       }
 
       return ''
@@ -303,8 +308,9 @@ function makeDayGridSubclass(SuperClass) {
       let view = this.view
 
       if (this.colWeekNumbersVisible) {
-        return '<td class="fc-week-number ' + view.calendar.theme.getClass('widgetContent') + '" ' +
-          view.weekNumberStyleAttr() + '></td>'
+        let htmlFragment = document.createRange().createContextualFragment('<td class="fc-week-number ' + view.calendar.theme.getClass('widgetContent') + '"></td>');
+        view.weekNumberStyleAttr(htmlFragment);
+        return htmlFragment;
       }
 
       return ''
@@ -317,7 +323,9 @@ function makeDayGridSubclass(SuperClass) {
       let view = this.view
 
       if (this.colWeekNumbersVisible) {
-        return '<td class="fc-week-number" ' + view.weekNumberStyleAttr() + '></td>'
+        let htmlFragment = document.createRange().createContextualFragment('<td class="fc-week-number"></td>');
+        view.weekNumberStyleAttr(htmlFragment);
+        return htmlFragment;
       }
 
       return ''
